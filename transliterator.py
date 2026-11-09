@@ -20,7 +20,9 @@ word_rules = {
     "alli": "ಅಲ್ಲಿ",
     "chennagide": "ಚೆನ್ನಾಗಿದೆ",
     "hegiddira": "ಹೇಗಿದ್ದೀರಾ",
-    "dhanyavaada": "ಧನ್ಯವಾದ"
+    "dhanyavaada": "ಧನ್ಯವಾದ",
+    "ide": "ಇದೆ",
+    "nange": "ನಂಗೆ"
 }
 
 
@@ -30,11 +32,10 @@ def transliterate_word(word):
     if word in word_rules:
         return word_rules[word]
 
-    return "Word not found in rule table"
+    return word
 
-
-# Test the rules
-words = ["namaskara", "kannada", "amma", "appa", "neeru"]
-
-for word in words:
-    print(word, "->", transliterate_word(word))
+if __name__ == "__main__":
+    words = ["namaskara", "kannada", "amma", "appa", "neeru"]
+    for word in words:
+        print(word, "->", transliterate_word(word))
+    print(transliterate_word("alli"), transliterate_word("ide"), transliterate_word("hello"))
