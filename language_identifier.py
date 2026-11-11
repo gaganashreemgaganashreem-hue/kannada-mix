@@ -1,33 +1,41 @@
-import regex
+import re
+from transliterator import word_rules, spelling_variations
 
-def identify_token(token):
-
-    # Check for Kannada
-    if regex.search(r'[\u0C80-\u0CFF]', token):
-        return "Kannada"
-
-    # Check for English
-    elif regex.fullmatch(r'[A-Za-z]+', token):
-        return "English"
-
-    # Check for numbers
-    elif regex.fullmatch(r'\d+', token):
-        return "Number"
-
-    # Check for emojis
-    elif regex.search(r'\p{Extended_Pictographic}', token):
-        return "Emoji"
-
-    # Check for punctuation
-    elif regex.fullmatch(r'\p{P}+', token):
-        return "Punctuation"
-
-    else:
-        return "Other"
+# Common English words for the initial baseline
+english_words = {
+    "i", "you", "we", "they", "he", "she",
+    "the", "is", "are", "was", "am",
+    "college", "school", "camera", "tomorrow",
+    "today", "exam", "computer", "project",
+    "good", "morning", "hello", "thank",
+    "please", "have", "going", "come"
+}
 
 
-# Test sentence
-tokens = ["ನಮಸ್ಕಾರ", "Hello", "😊", "123", "!"]
+def identify_word(word):
+    word = word.strip()
 
-for token in tokens:
-    print(token, ":", identify_token(token))
+    if not word:
+        return "EMPTY"
+
+    if word.isdigit():
+        return "NUMBER"
+
+    if re.search(r"[\u0C80-\u0CFF]", word):
+        return "KANNADA_SCRIPT"
+
+    if not any(char.isalnum() for char in word):
+        return "SYMBOL_OR_EMOJI"
+
+    normalized = word.lower()
+
+    if normalized in word_rules or normalized in spelling_variations:
+        return "ROMANIZED_KANNADA"
+
+    if normalized in english_words:
+        return "ENGLISH"
+
+    if word.isascii() and word.isalpha():
+        return "UNCLASSIFIED_LATIN"
+
+    return "UNKNOWN"
